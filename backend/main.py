@@ -103,11 +103,7 @@ async def callback(
     db.add(user_token)
     await db.commit()
 
-    response = JSONResponse({
-        "message": "Login successful",
-        "session_id": session_id,
-        "portal_id": portal_id
-    })
+    response = RedirectResponse(url="http://localhost:3000/chat", status_code=302)
     response.set_cookie(
         key="session_id",
         value=session_id,
@@ -214,21 +210,30 @@ async def confirm_action(
         pending_actions.cancel(request.confirmation_id)
         pending_actions.delete(request.confirmation_id)
         return ConfirmActionResponse(
-            message="❌ Action cancelled. Nothing was changed.",
+            message="Action cancelled. Nothing was changed.",
             success=False
         )
 
-    # User confirmed — resume graph
+    # User confirmed — re-invoke with confirmed message
     zoho_client = ZohoClient(
         access_token=user.access_token,
         refresh_token=user.refresh_token,
         portal_id=user.portal_id
     )
+
     graph = build_graph(zoho_client)
-    config = {"configurable": {"thread_id": user.session_id}}
+    config = {"configurable": {"thread_id": user.session_id + "_confirm"}}
 
     try:
-        result = await graph.ainvoke(None, config=config)
+        # Get the original action details
+        original_message = pending["details"]["message"]
+        
+        # Re-invoke with confirmed instruction
+        result = await graph.ainvoke(
+            {"messages": [HumanMessage(content=f"Yes, confirmed. Please proceed: {original_message}")]},
+            config=config
+        )
+
         last_message = result["messages"][-1]
         pending_actions.delete(request.confirmation_id)
 
