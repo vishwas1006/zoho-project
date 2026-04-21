@@ -25,6 +25,8 @@ class UserToken(Base):
 
 # ─── Create tables ────────────────────────────────────────────
 async def init_db():
+    # Import models so Base knows about all tables
+    from memory.long_term import UserPreferenceModel, ConversationHistoryModel
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
