@@ -330,3 +330,7 @@ async def debug_portal(user=Depends(get_current_user)):
 @app.get("/")
 async def root():
     return {"status": "running"}
+
+@app.get("/auth/check")
+async def auth_check(user=Depends(get_current_user)):
+    return {"status": "authenticated", "portal_id": user.portal_id}
