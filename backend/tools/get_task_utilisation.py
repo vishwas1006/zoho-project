@@ -24,9 +24,9 @@ def make_get_task_utilisation_tool(client: ZohoClient):
         if not member_tasks:
             return "No assigned tasks found."
 
-        result = "📊 Task load per member:\n"
+        result = " Task load per member:\n"
         for member, tasks_list in sorted(member_tasks.items(), key=lambda x: -len(x[1])):
-            result += f"\n👤 {member}: {len(tasks_list)} tasks\n"
+            result += f"\n {member}: {len(tasks_list)} tasks\n"
             for t in tasks_list[:3]:  # show first 3
                 result += f"   - {t}\n"
             if len(tasks_list) > 3:

@@ -19,6 +19,6 @@ def make_create_task_tool(client: ZohoClient):
         )
         tasks = data.get("tasks", [])
         if tasks:
-            return f"✅ Task '{tasks[0]['name']}' created successfully with ID: {tasks[0]['id']}"
-        return "❌ Failed to create task."
+            return f" Task '{tasks[0]['name']}' created successfully with ID: {tasks[0]['id']}"
+        return " Failed to create task."
     return create_task

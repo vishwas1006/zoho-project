@@ -11,6 +11,6 @@ def make_delete_task_tool(client: ZohoClient):
             f"/portal/{client.portal_id}/projects/{project_id}/tasks/{task_id}/"
         )
         if data.get("response", {}).get("status") == "success":
-            return f"✅ Task {task_id} deleted successfully."
-        return "❌ Failed to delete task."
+            return f" Task {task_id} deleted successfully."
+        return " Failed to delete task."
     return delete_task

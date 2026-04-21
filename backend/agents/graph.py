@@ -14,8 +14,6 @@ from zoho.client import ZohoClient
 from memory.short_term import short_term_memory
 
 
-# ─── Graph State ─────────────────────────────────────────────
-
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]
     current_agent: str
@@ -23,13 +21,9 @@ class AgentState(TypedDict):
     pending_action: dict
 
 
-# ─── Build Graph ─────────────────────────────────────────────
-
 def build_graph(zoho_client: ZohoClient):
-    # Create all tools
     all_tools = make_all_tools(zoho_client)
 
-    # Split tools by agent
     query_tools = [
         all_tools["list_projects"],
         all_tools["list_tasks"],
@@ -44,11 +38,8 @@ def build_graph(zoho_client: ZohoClient):
         all_tools["delete_task"],
     ]
 
-    # Create agents
     query_agent = create_query_agent(query_tools)
     action_agent = create_action_agent(action_tools)
-
-    # ─── Node functions ──────────────────────────────────────
 
     def router_node(state: AgentState) -> AgentState:
         decision = router.route(state)
@@ -64,8 +55,6 @@ def build_graph(zoho_client: ZohoClient):
 
     def route_decision(state: AgentState) -> str:
         return state.get("current_agent", "query_agent")
-
-    # ─── Build the graph ─────────────────────────────────────
 
     graph = StateGraph(AgentState)
 
@@ -87,5 +76,4 @@ def build_graph(zoho_client: ZohoClient):
     graph.add_edge("query_agent", END)
     graph.add_edge("action_agent", END)
 
-    # Compile with short-term memory
     return graph.compile(checkpointer=short_term_memory)

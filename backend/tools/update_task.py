@@ -31,6 +31,6 @@ def make_update_task_tool(client: ZohoClient):
         )
         tasks = data.get("tasks", [])
         if tasks:
-            return f"✅ Task '{tasks[0]['name']}' updated successfully."
-        return "❌ Failed to update task."
+            return f" Task '{tasks[0]['name']}' updated successfully."
+        return " Failed to update task."
     return update_task

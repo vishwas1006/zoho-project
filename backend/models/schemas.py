@@ -1,7 +1,7 @@
 # backend/models/schemas.py
 
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
 
 
@@ -32,14 +32,14 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     message: str
-    agent_used: Optional[str] = None      # "query_agent" or "action_agent"
-    requires_confirmation: bool = False    # True when HIL is triggered
-    confirmation_id: Optional[str] = None # ID to confirm/cancel the action
+    agent_used: Optional[str] = None
+    requires_confirmation: bool = False
+    confirmation_id: Optional[str] = None
 
 
 class ConfirmActionRequest(BaseModel):
     confirmation_id: str
-    confirmed: bool   # True = proceed, False = cancel
+    confirmed: bool
 
 
 class ConfirmActionResponse(BaseModel):
@@ -85,6 +85,6 @@ class UserPreference(BaseModel):
 class ConversationHistory(BaseModel):
     user_id: str
     session_id: str
-    role: str          # "user" or "assistant"
+    role: str
     content: str
     timestamp: datetime = datetime.now()
